@@ -27,7 +27,7 @@
 
 
 <script>
-    import axios from 'axios'
+    import axios from '../modules/axios-module'
     export default {
         name: "FetchData",
         data() {
@@ -40,9 +40,6 @@
                 axios.get('/WeatherForecast')
                     .then((response) => {
                         this.forecasts =  response.data;
-                    })
-                    .catch(function (error) {
-                        alert(error);
                     });
             }
         },

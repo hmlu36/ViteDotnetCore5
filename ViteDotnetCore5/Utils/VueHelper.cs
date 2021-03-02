@@ -14,6 +14,7 @@ using System.Threading.Tasks;
 
 namespace ViteDotnetCore5.Utils {
 
+    //Reference: https://github.com/rposener/DotNetVueIntegration
     public static class VueHelper {
         // done message of 'npm run serve' command.
         private static string DoneMessage { get; } = "Dev server running at:";

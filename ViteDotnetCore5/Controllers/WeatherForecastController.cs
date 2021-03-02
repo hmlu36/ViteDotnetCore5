@@ -1,9 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using ViteDotnetCore5.Filters;
 
 namespace ViteDotnetCore5.Controllers {
     [ApiController]
@@ -21,6 +23,7 @@ namespace ViteDotnetCore5.Controllers {
         }
 
         [HttpGet]
+        [AuthorizeFilter]
         public IEnumerable<WeatherForecast> Get() {
             var rng = new Random();
             return Enumerable.Range(1, 5).Select(index => new WeatherForecast {

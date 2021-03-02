@@ -1,0 +1,46 @@
+﻿步驟零 修改.csproj，使其支援 .NetCore，.NetStarndard多個版本框架，可以自由新增framework版本，如下，netstandard要放在最後面，不然步驟四會說沒有runtime，無法執行
+<TargetFrameworks>netcoreapp3.1;netstandard2.1</TargetFrameworks>
+
+步驟一 需先從Nuget安裝
+1.Microsoft.EntityFrameworkCore
+2.Microsoft.EntityFrameworkCore.SqlServer
+3.Microsoft.EntityFrameworkCore.Tools
+4.Microsoft.EntityFrameworkCore.Design (EF Core 2.x才要裝，3.0後的不用裝)
+
+步驟二 打開套件管理員主控台
+Visual Studio → 工具 → NuGet套件管理員 → 套件管理員主控台
+
+步驟三 輸入 
+ls 指令
+cd 指令將目錄移到有Geosat.Core.Database.csproj檔案的目錄位置
+
+步驟四(只需做一次)
+dotnet ef 必須安裝為全域或本機工具。 大部分的開發人員會使用下列命令，以全域工具的形式安裝 dotnet ef：
+cmd
+dotnet tool install --global dotnet-ef
+
+步驟五 輸入
+dotnet ef dbcontext scaffold "Data Source=192.168.0.98;Initial Catalog=GeoEPP;User ID=sa;Password=1qaz@WSX;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False" Microsoft.EntityFrameworkCore.SqlServer -d -f -o Models/EFCore
+p.s. 參數
+-d : DataAnnotations，對應DB表格產生的Class的屬性欄位會有Annotation描述欄位資訊
+-f : Force，強制覆寫(更新)Class
+-o : 要產生的檔案位置目錄，例如 -o GeosatDAASMis 會將產生的檔案放到GeosatDAASMis目錄下，若沒這個目錄會自動建立
+
+
+
+補充，若要在Context中隱藏connnection string的方式
+參考：https://github.com/dotnet/efcore/issues/10432
+      https://docs.microsoft.com/zh-tw/aspnet/core/security/app-secrets?view=aspnetcore-3.1&tabs=windows
+
+1.先建立user-secrets，並儲存connection string (只有第一次要做)
+dotnet user-secrets init
+產生secrets.json檔案(路徑：%APPDATA%\Roaming\Microsoft\UserSecrets\<user_secrets_id>\secrets.json)
+=======
+
+1.先建立user-secrets，並儲存connection string (只有第一次要做)
+dotnet user-secrets init
+
+dotnet user-secrets set ConnectionStrings.GeoEPP "Data Source=192.168.0.98;Initial Catalog=GeoEPP;User ID=sa;Password=1qaz@WSX;Connect Timeout=30;Encrypt=False;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False"
+
+2.透過EntityFramework產生Model
+dotnet ef dbcontext scaffold Name=GeoEPP Microsoft.EntityFrameworkCore.SqlServer -d -f -o Models/EFCore
