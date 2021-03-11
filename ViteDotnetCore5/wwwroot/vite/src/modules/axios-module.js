@@ -33,7 +33,7 @@ instance.interceptors.request.use((config) => {
 instance.interceptors.response.use((response) => {
     return response
 }, (error) => {
-    console.log(error.response);
+    console.log(JSON.stringify(error));
     if (!error.response) {
         return Promise.reject(error)
     }

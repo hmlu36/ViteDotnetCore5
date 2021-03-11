@@ -11,7 +11,8 @@
                         </div>
 
                         <div class="form-label-group">
-                            <input type="password" id="inputPassword" class="form-control form-control-lg" placeholder="密碼" v-model="loginUser.password">
+                            <input type="password" id="inputPassword" class="form-control form-control-lg" placeholder="密碼" v-model="loginUser.password" data-eye>
+                            <i class="far fa-eye form-control-icon"></i>
                             <label for="inputPassword">密碼</label>
                         </div>
 
@@ -19,7 +20,7 @@
                             <input type="checkbox" class="custom-control-input" id="customCheck1">
                             <label class="custom-control-label" for="customCheck1">Remember password</label>
                         </div>
-                        <button class="btn btn-md btn-primary btn-block text-uppercase" v-on:click="login">登入</button>
+                        <button class="btn btn-primary btn-block text-uppercase" v-on:click="login">登入</button>
                     </div>
                 </div>
             </div>
@@ -151,6 +152,7 @@
                 font-size: 12px;
                 color: #777;
             }
+
 
     /* Fallback for Edge
     -------------------------------------------------- */

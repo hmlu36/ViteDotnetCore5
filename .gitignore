@@ -2,3 +2,5 @@
 /ViteDotnetCore5/ClientApp/package-lock.json
 /ViteDotnetCore5/package-lock.json
 /.vs
+/ViteDotnetCore5/obj
+/ViteDotnetCore5/bin

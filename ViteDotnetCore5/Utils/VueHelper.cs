@@ -48,7 +48,7 @@ namespace ViteDotnetCore5.Utils {
                 var tempDir = webHostEnvironment.ContentRootPath;
                 var tempPfx = Path.Combine(tempDir, spa.Options.SourcePath, "devcert.pfx");
                 var tempConfig = Path.Combine(tempDir, spa.Options.SourcePath, "vite.config.js");
-
+                
                 if (!File.Exists(tempPfx) || !File.Exists(tempConfig)) {
                     var pfxPassword = Guid.NewGuid().ToString("N");
                     logger.LogInformation($"Exporting dotnet dev cert to {tempPfx} for Vite");
