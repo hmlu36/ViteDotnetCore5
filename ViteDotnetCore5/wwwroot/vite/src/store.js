@@ -45,17 +45,40 @@ export default createStore({
         login: async ({ commit }, model) => {
             try {
                 commit("clearError");
-                await axios.post("/api/auth/Login", model).then(result => {
-                    if (result.data.success) {
-                        commit("setToken", result.data.data);
-                        router.push("/");
-                    }
-                    else {
-                        commit("setError", "Authentication Failed");
-                    }
-                });
+                console.log("grecaptcha");
 
-            } catch {
+                grecaptcha.ready(() => {
+
+                    //console.log('1. grecaptcha.ready');
+                    //console.log("2. 6Lfq3HsaAAAAAAJd-q-NUR1enFjEprK4JkhrGioT', { action: 'login' }");
+
+                    grecaptcha.execute('6Lfq3HsaAAAAAAJd-q-NUR1enFjEprK4JkhrGioT', { action: 'login' }).then((token) => {
+
+                        //console.log('3. Get token from reCAPTCHA service => ', token);
+                        //console.log('4. Verifying Bot...');
+
+                        axios.post("/api/auth/Verify/?token=" + token).then(result => {
+                            //console.log(JSON.stringify(result.data));
+                            if (result.data.success) {
+                                axios.post("/api/auth/Login", model).then(response => {
+                                    if (response.data.success) {
+                                        commit("setToken", response.data.data);
+                                        router.push("/");
+                                    }
+                                    else {
+                                        commit("setError", "Authentication Failed");
+                                    }
+                                });
+                            }
+                            else {
+                                this.$swal(result.data.message);
+                                //router.push("/");
+                            }
+                        });
+                    });
+                });
+            } catch (ex) {
+                console.log(JSON.stringify(ex));
                 console.log("fail to login");
                 commit("setError", "Failed to login");
             }

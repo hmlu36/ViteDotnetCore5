@@ -14,6 +14,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using ViteDotnetCore5.Extensions;
 using ViteDotnetCore5.Models.Config;
 using ViteDotnetCore5.Models.EFCore;
 using ViteDotnetCore5.Services;
@@ -25,6 +26,8 @@ namespace ViteDotnetCore5 {
         public Startup(IConfiguration configuration) {
             // 將設定資料存取成singleton
             configuration.GetSection("JwtSettings").Bind(JwtSettings.Instance);
+            configuration.GetSection("GoogleRecaptcha").Bind(GoogleRecaptcha.Instance);
+
             _configuration = configuration;
         }
 
@@ -65,14 +68,14 @@ namespace ViteDotnetCore5 {
                 configuration.RootPath = "wwwroot";
             });
 
-
             InjectService(services);
         }
 
         // DI(Dependency Injection) 注入service
         private void InjectService(IServiceCollection services) {
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-
+            services.AddSingleton<IRecaptchaExtension, RecaptchaExtension>();
+            services.AddHttpClient();
 
             // configure DI for application services
             // 帳號、角色、公司別相關資訊
@@ -81,17 +84,16 @@ namespace ViteDotnetCore5 {
             services.AddScoped<IUserTokenService, UserTokenService>();
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env) {
             if (env.IsDevelopment()) {
                 app.UseDeveloperExceptionPage();
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "webapi v1"));
             } else {
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
                 app.UseHttpsRedirection();
             }
+
             app.UseStaticFiles();
 
             app.UseRouting();
@@ -100,7 +102,10 @@ namespace ViteDotnetCore5 {
 
             app.UseEndpoints(endpoints => {
                 endpoints.MapControllers();
-                endpoints.MapFallbackToFile("/index.html");
+
+                if (!env.IsDevelopment()) {
+                    endpoints.MapFallbackToFile("/index.html"); // 預設導回index.html
+                }
             });
 
             if (env.IsDevelopment()) {

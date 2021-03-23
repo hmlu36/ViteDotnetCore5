@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using ViteDotnetCore5.Extensions;
 using ViteDotnetCore5.Models;
 using ViteDotnetCore5.Models.Auth;
 using ViteDotnetCore5.Models.Result;
@@ -22,9 +23,26 @@ namespace ViteDotnetCore5.Controllers {
 
         private readonly IAuthService authService;
         private readonly IUserTokenService userTokenService;
-        public AuthController(IAuthService authService, IUserTokenService userTokenService) {
+        private IRecaptchaExtension recaptcha;
+        public AuthController(IAuthService authService, IUserTokenService userTokenService, IRecaptchaExtension recaptcha) {
             this.authService = authService;
             this.userTokenService = userTokenService;
+            this.recaptcha = recaptcha;
+        }
+
+        /// <summary>
+        /// google reCAPTCHA V3
+        /// </summary>
+        /// <param name="token"></param>
+        /// <returns></returns>
+        // 呼叫時會因為網址過長IIS(超過320個字元), IIS視為無效網址
+        // 解法 => 改成querystring就可以
+        // 範例: http://path.to.website/very-long-string-goes-here/ => http://path.to.website/?key=very-long-string-goes-here
+        // Ref: https://stackoverflow.com/questions/40448588/i-get-a-400-bad-request-invalid-url-when-the-length-of-the-request-exceeds-320
+        [HttpPost("Verify")]
+        public async Task<ActionResult> Verify([FromQuery(Name = "token")] string token) {
+            var verified = await recaptcha.VerifyAsync(token);
+            return Ok(verified);
         }
 
         /// <summary>

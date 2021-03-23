@@ -1,29 +1,33 @@
 <template>
-    <div class="container">
-        <div class="row">
-            <div class="col-sm-9 col-md-7 col-lg-5 mx-auto">
-                <div class="card card-signin my-5">
-                    <div class="card-body">
-                        <h5 class="card-title text-center">帳號登入</h5>
-                        <div class="form-label-group">
-                            <input class="form-control form-control-lg" id="account" placeholder="帳號" autofocus v-model="loginUser.account">
+    <div class="valign-wrapper login-form">
+        <div class="col card hoverable s10 pull-s1 m6 pull-m3 l4 pull-l4">
+            <form @submit.prevent="login">
+                <div class="card-content">
+                    <span class="card-title">帳號登入</span>
+                    <div class="row">
+                        <div class="input-field col s12">
+                            <i class="material-icons prefix">account_circle</i>
+                            <input id="account" type="text" v-model="loginUser.account">
                             <label for="account">帳號</label>
                         </div>
-
-                        <div class="form-label-group">
-                            <input type="password" id="inputPassword" class="form-control form-control-lg" placeholder="密碼" v-model="loginUser.password" data-eye>
-                            <i class="far fa-eye form-control-icon"></i>
+                        <div class="input-field col s12">
+                            <i class="material-icons prefix">lock_outline</i>
+                            <input :type="showPassword ? 'text' : 'password'" id="inputPassword" v-model="loginUser.password">
                             <label for="inputPassword">密碼</label>
+                            <span class="field-icon" @click="showPassword = !showPassword">
+                                <span class="material-icons">
+                                    {{showPassword ? 'visibility' : 'visibility_off'}}
+                                </span>
+                            </span>
                         </div>
+                    </div>
 
-                        <div class="custom-control custom-checkbox mb-3">
-                            <input type="checkbox" class="custom-control-input" id="customCheck1">
-                            <label class="custom-control-label" for="customCheck1">Remember password</label>
-                        </div>
-                        <button class="btn btn-primary btn-block text-uppercase" v-on:click="login">登入</button>
+                    <div class="card-action right-align">
+                        <input type="reset" id="reset" class="btn-flat grey-text waves-effect">
+                        <button class="btn waves-effect indigo" type="submit">登入</button>
                     </div>
                 </div>
-            </div>
+            </form>
         </div>
     </div>
 </template>
@@ -32,8 +36,12 @@
     import { reactive } from "vue";
     import store from "../../store";
 
-
     export default {
+        data() {
+            return {
+                showPassword: false
+            }
+        },
         setup() {
             const loginUser = reactive({ account: "", password: "" });
             const login = () => {
@@ -41,10 +49,10 @@
                 store.dispatch("login", loginUser);
             }
 
-            function onSubmit() {
-                //console.log(JSON.stringify(loginUser));
-                store.dispatch("login", loginUser);
-            }
+            // include google reCaptcha V3
+            let tag = document.createElement("script");
+            tag.setAttribute("src", "https://www.google.com/recaptcha/api.js?render=6Lfq3HsaAAAAAAJd-q-NUR1enFjEprK4JkhrGioT");
+            document.head.appendChild(tag);
 
             return {
                 loginUser,
@@ -56,127 +64,21 @@
 
 <style scoped>
 
-    body {
-        background: #007bff;
-        background: linear-gradient(to right, #0062E6, #33AEFF);
+    span.field-icon {
+        float: right;
+        position: absolute;
+        right: 10px;
+        top: 10px;
+        cursor: pointer;
+        z-index: 2;
     }
 
-    .card-signin {
-        border: 0;
-        border-radius: 1rem;
-        box-shadow: 0 0.5rem 1rem 0 rgba(0, 0, 0, 0.1);
-    }
-
-        .card-signin .card-title {
-            margin-bottom: 2rem;
-            font-weight: 300;
-            font-size: 1.5rem;
-        }
-
-        .card-signin .card-body {
-            padding: 2rem;
-        }
-
-    .form-signin {
-        width: 100%;
-    }
-
-        .form-signin .btn {
-            font-size: 80%;
-            border-radius: 5rem;
-            letter-spacing: .1rem;
-            font-weight: bold;
-            padding: 1rem;
-            transition: all 0.2s;
-        }
-
-    .form-label-group {
+    .login-form {
+        display: flex;
+        align-items: center;
+        justify-content: center;
         position: relative;
-        margin-bottom: 1rem;
+        height: 100vh;
     }
 
-
-        .form-label-group > input,
-        .form-label-group > label {
-            left: 20px;
-            /*padding: var(--input-padding-y) var(--input-padding-x);*/
-        }
-
-        .form-label-group input {
-            border-radius: 2rem;
-        }
-
-        .form-label-group > label {
-            position: absolute;
-            top: 10px;
-            display: block;
-            width: 100%;
-            margin-bottom: 0;
-            /* Override default `<label>` margin */
-            /*line-height: 1.5;*/
-            color: #495057;
-            border: 1px solid transparent;
-            border-radius: .25rem;
-            transition: all .1s ease-in-out;
-        }
-
-        .form-label-group input::-webkit-input-placeholder {
-            color: transparent;
-        }
-
-        .form-label-group input:-ms-input-placeholder {
-            color: transparent;
-        }
-
-        .form-label-group input::-ms-input-placeholder {
-            color: transparent;
-        }
-
-        .form-label-group input::-moz-placeholder {
-            color: transparent;
-        }
-
-        .form-label-group input::placeholder {
-            color: transparent;
-        }
-
-        .form-label-group input:not(:placeholder-shown) {
-            padding-top: calc(var(--input-padding-y) + var(--input-padding-y) * (2 / 3));
-            padding-bottom: calc(var(--input-padding-y) / 3);
-        }
-
-            .form-label-group input:not(:placeholder-shown) ~ label {
-                padding-top: calc(var(--input-padding-y) / 3);
-                padding-bottom: calc(var(--input-padding-y) / 3);
-                top: 0;
-                font-size: 12px;
-                color: #777;
-            }
-
-
-    /* Fallback for Edge
-    -------------------------------------------------- */
-
-    @supports (-ms-ime-align: auto) {
-        .form-label-group > label {
-            display: none;
-        }
-
-        .form-label-group input::-ms-input-placeholder {
-            color: #777;
-        }
-    }
-
-    /* Fallback for IE
-    -------------------------------------------------- */
-
-    @media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
-        .form-label-group > label {
-            display: none;
-        }
-
-        .form-label-group input:-ms-input-placeholder {
-            color: #777;
-        }
-    }
 </style>
