@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using ViteDotnetCore5.Filters;
+using ViteDotnetCore5.Models;
 
 namespace ViteDotnetCore5.Controllers {
     [ApiController]

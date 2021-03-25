@@ -1,6 +1,6 @@
 using System;
 
-namespace ViteDotnetCore5 {
+namespace ViteDotnetCore5.Models {
     public class WeatherForecast {
         public DateTime Date { get; set; }
 

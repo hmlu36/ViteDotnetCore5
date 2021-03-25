@@ -23,13 +23,13 @@
             </tr>
         </tbody>
     </table>
+
 </template>
 
 
 <script>
     import axios from '../modules/axios-module'
     export default {
-        name: "FetchData",
         data() {
             return {
                 forecasts: []
